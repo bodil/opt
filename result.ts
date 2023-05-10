@@ -1,6 +1,5 @@
 import { Option } from "./option.ts";
 import { ResultClass } from "./result-impl.ts";
-export { ResultClass };
 
 export type Ok<A> = { result: true; value: A };
 export type Err<E> = { result: false; value: E };
