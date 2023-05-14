@@ -69,6 +69,10 @@ class Result<A, E> implements IResult<A, E> {
         return this as unknown as ResultType<A, F>;
     }
 
+    bimap<B, F>(ok: (v: A) => B, err: (v: E) => F): ResultType<B, F> {
+        return this.isOk() ? Ok(ok(this.value)) : Err(err(this.value as E));
+    }
+
     apply<B>(f: ResultType<(a: A) => B, E>): ResultType<B, E> {
         if (f.isErr()) {
             return f as unknown as ResultType<B, E>;

@@ -18,35 +18,33 @@ export type Err<E> = { result: false; value: E };
  * error value. This is reflected in their constructors: to construct a success
  * value, you call {@link Ok}, and to construct an error value, you call {@link Err}.
  *
+ * @template A The type of the success value.
+ * @template E The type of the error value.
+ *
  * @see IResult
+ * @see IResultStatic
+ *
+ * @example
+ * function processResult(result: Result<string, Error>): void {
+ *     if (result.isOk()) {
+ *         console.info(result.value);
+ *     } else {
+ *         console.error(result.value.message);
+ *     }
+ * }
+ *
+ * processResult(Ok("Hello Joe!"));
+ * processResult(Err(new Error("Get Robert to fix the bug!")));
  */
 export type Result<A, E> = (Ok<A> | Err<E>) & IResult<A, E>;
 
 /**
- * @external Promise
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise}
- */
-
-/**
- * @external DOMException
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMException}
- */
-
-/**
- * @external AbortController
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortController}
- */
-
-/**
  * Methods available on {@link Result} objects.
+ *
+ * @template A The type of the success value.
+ * @template E The type of the error value.
  */
 export interface IResult<A, E> {
-    /**
-     * The `match` function takes two callbacks, one for each possible state of
-     * the {@link Result}, and calls the one that matches the actual state.
-     */
-    match<B>(onOk: (value: A) => B, onErr: (value: E) => B): B;
-
     /**
      * Test if the {@link Result} is {@link Ok}.
      */
@@ -68,6 +66,12 @@ export interface IResult<A, E> {
     assertErr(): asserts this is Err<E>;
 
     /**
+     * The `match` function takes two callbacks, one for each possible state of
+     * the {@link Result}, and calls the one that matches the actual state.
+     */
+    match<B>(onOk: (value: A) => B, onErr: (value: E) => B): B;
+
+    /**
      * Call the provided function with the contained value if the {@link Result} is {@link Ok}.
      */
     ifOk(onOk: (value: A) => void): void;
@@ -82,6 +86,8 @@ export interface IResult<A, E> {
      * contained value and return a new {@link Result} containing the result of the
      * function, which must be another {@link Result}. If the {@link Result} is {@link Err},
      * the {@link Err} is returned unchanged and the function is never called.
+     *
+     * This is the monadic bind function, for those who celebrate.
      */
     chain<B>(f: (value: A) => Result<B, E>): Result<B, E>;
 
@@ -102,6 +108,25 @@ export interface IResult<A, E> {
      */
     mapErr<F>(f: (value: E) => F): Result<A, F>;
 
+    /**
+     * Transform the contained value using one of the provided functions `ok`
+     * and `err`, according to whether the {@link Result} is {@link Ok} or
+     * {@link Err}.
+     */
+    bimap<B, F>(ok: (okValue: A) => B, err: (errValue: E) => F): Result<B, F>;
+
+    /**
+     * Given another {@link Result} containing a function from `A` to `B`:
+     *
+     * If both {@link Result}s are {@link Ok}, call the function with the
+     * success value of this {@link Result} and return a `Result<B, E>`
+     * containing what the function returns.
+     *
+     * If the result in `f` is {@link Err}, return that instead.
+     *
+     * If the result in `f` is {@link Ok} but the original result is
+     * {@link Err}, return the original error {@link Result} unchanged.
+     */
     apply<B>(f: Result<(a: A) => B, E>): Result<B, E>;
 
     /**
@@ -159,19 +184,77 @@ export interface IResult<A, E> {
     toJSON(): { result: boolean; value: A | E };
 }
 
-export const Result = {
+/**
+ * Static methods on the {@link Result} object.
+ */
+export interface IResultStatic {
     /**
      * Convert a {@link Promise} returning `A` into a {@link Promise} returning a {@link Result} of either `A` or the `Error` type.
      * The new {@link Promise} always succeeds, reflecting an error condition in the `Result` instead of the failure callback.
+     *
+     * @example
+     * const fetchResult = await Result.await(fetch("https://example.com/example.txt"));
+     * if (fetchResult.isErr()) {
+     *     console.error(fetchResult.value.message);
+     * }
      */
-    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>> {
-        return m.then(Ok, Err);
-    },
+    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>>;
 
     /**
      * Run a function and return its result as an {@link Ok} if it didn't throw any
      * exceptions, or an {@link Err} containing the thrown exception.
+     *
+     * @example
+     * const tryFn: Result<number, Error> = Result.try(() => {
+     *     throw new Error("fix the bug!");
+     * });
+     *
+     * if (tryFn.isErr()) {
+     *     console.error(tryFn.value.message);
+     * }
      */
+    try<A, E = unknown>(f: () => A): Result<A, E>;
+
+    /**
+     * Create a {@link Result} from the output of {@link IResult.toJSON}.
+     */
+    fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E>;
+
+    /**
+     * Test whether an unknown value is a {@link Result}.
+     *
+     * @example
+     * function assertResult(value: unknown): void {
+     *     if (Result.is(value)) {
+     *         value.assertOk();
+     *     }
+     * }
+     */
+    is(value: unknown): value is Result<unknown, unknown>;
+
+    /**
+     * The class constructor of {@link Result}s. You should never use this to
+     * construct {@link Result}s directly, preferring instead {@link Ok} and
+     * {@link Err}. It's exposed for use in `instanceof` checks, though
+     * calling {@link Result.is} to decide resultiness is preferred.
+     *
+     * @example
+     * import { expect } from "chai";
+     * expect(Ok("stop dots")).to.be.an.instanceof(Result.Class);
+     */
+    Class: new () => ResultClass<unknown, unknown>;
+}
+
+/**
+ * Static methods on the {@link Result} object.
+ *
+ * @see IResultStatic
+ */
+export const Result: IResultStatic = {
+    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>> {
+        return m.then(Ok, Err);
+    },
+
     try<A, E = unknown>(f: () => A): Result<A, E> {
         try {
             return Ok(f());
@@ -180,26 +263,17 @@ export const Result = {
         }
     },
 
-    /**
-     * Create a {@link Result} from the output of {@link Result#toJSON}.
-     */
+    // @ts-ignore: tsc gets confused about this type signature vs the interface.
     fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E> {
-        return doc.result ? Ok(doc.value as A) : Err(doc.value as E);
+        return (doc.result
+            ? Ok(doc.value as A)
+            : Err(doc.value as E)) as Result<A, E>;
     },
 
-    /**
-     * Test whether an unknown value is a {@link Result}.
-     */
     is(value: unknown): value is Result<unknown, unknown> {
         return value instanceof ResultClass;
     },
 
-    /**
-     * The class constructor of {@link Result}s. You should never use this to
-     * construct {@link Result}s directly, preferring instead {@link Ok} and
-     * {@link Err}. It's exposed for use in `instanceof` checks, though
-     * calling {@link Result.is} to decide resultiness is preferred.
-     */
     Class: ResultClass,
 };
 

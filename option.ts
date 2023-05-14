@@ -16,59 +16,19 @@ export type None = { result: false; value: never };
  * `Option<A>` provides a nullable value of type `A`. It's essentially the same
  * as `A | undefined` but with a lot of useful methods attached.
  *
+ * @template A The type of the contained value.
+ *
  * @see IOption
+ * @see IOptionStatic
  */
 export type Option<A> = (Some<A> | None) & IOption<A>;
 
-export const Option = {
-    /**
-     * Create an {@link Option} from a value that's either `A` or `undefined`.
-     *
-     * If the provided value is `undefined`, it will create a {@link None}.
-     * Otherwise, it will create a {@link Some} containing the value.
-     */
-    from<A>(value: A | undefined): Option<A> {
-        return value === undefined ? None : Some(value as A);
-    },
-
-    /**
-     * Create an {@link Option} from the output of {@link Option#toJSON}.
-     */
-    fromJSON<A>(doc: { result: boolean; value?: A }): Option<A> {
-        return doc.result ? Some(doc.value as A) : None;
-    },
-
-    /**
-     * Test whether an unknown value is an {@link Option}.
-     */
-    is(value: unknown): value is Option<unknown> {
-        return value instanceof OptionClass;
-    },
-
-    /**
-     * The class constructor of {@link Option}s. You should never use this to
-     * construct {@link Option}s directly, preferring instead {@link Some} and
-     * {@link None}. It's exposed for use in `instanceof` checks, though
-     * calling {@link Option.is} to decide resultiness is preferred.
-     */
-    Class: OptionClass,
-};
-
-/**
- * @external TypeError
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError}
- */
-
 /**
  * Methods available on {@link Option} objects.
+ *
+ * @template A The type of the contained value.
  */
 export interface IOption<A> {
-    /**
-     * The `match` function takes two callbacks, one for each possible state of
-     * the {@link Option}, and calls the one that matches the actual state.
-     */
-    match<B>(onSome: (value: A) => B, onNone: () => B): B;
-
     /**
      * Test if the {@link Option} contains a value.
      */
@@ -94,6 +54,12 @@ export interface IOption<A> {
     assertNone(): asserts this is None;
 
     /**
+     * The `match` function takes two callbacks, one for each possible state of
+     * the {@link Option}, and calls the one that matches the actual state.
+     */
+    match<B>(onSome: (value: A) => B, onNone: () => B): B;
+
+    /**
      * Call the provided function with the contained value if the {@link Option}
      * isn't empty.
      */
@@ -109,6 +75,8 @@ export interface IOption<A> {
      * return a new {@link Option} containing the result of the function, which must
      * be another {@link Option}. If the {@link Option} is empty, return {@link None}
      * without calling the function.
+     *
+     * This is the monadic bind function, for those who celebrate.
      */
     chain<B>(f: (value: A) => Option<B>): Option<B>;
 
@@ -123,6 +91,15 @@ export interface IOption<A> {
      * If the {@link Option} isn't empty, transform its contained value using the provided function.
      */
     map<B>(f: (value: A) => B): Option<B>;
+
+    /**
+     * Given another {@link Option} containing a function from `A` to `B`, if
+     * both {@link Option}s are {@link Some}, call that function with the value
+     * of this {@link Option} and return an `Option<B>` containing the
+     * function's return value. If either {@link Option} is {@link None}, return
+     * {@link None}.
+     */
+    apply<B>(f: Option<(a: A) => B>): Option<B>;
 
     /**
      * If the {@link Option} isn't empty, return the provided {@link Option} of `B`, otherwise return {@link None}.
@@ -156,6 +133,8 @@ export interface IOption<A> {
 
     /**
      * Convert the {@link Option} into an optional value of `A`.
+     *
+     * @see IOptionStatic.from
      */
     unwrap(): A | undefined;
 
@@ -164,6 +143,77 @@ export interface IOption<A> {
      */
     toJSON(): { result: true; value: A } | { result: false };
 }
+
+/**
+ * Static methods on the {@link Option} object.
+ */
+export interface IOptionStatic {
+    /**
+     * Create an {@link Option} from a value that's either `A` or `undefined`.
+     *
+     * If the provided value is `undefined`, it will create a {@link None}.
+     * Otherwise, it will create a {@link Some} containing the value.
+     *
+     * @see IOption.unwrap
+     *
+     * @example
+     * // Guarded index lookup:
+     * function getIndex<A>(array: A[], index: number): Option<A> {
+     *     return Option.from(array[index]);
+     * }
+     */
+    from<A>(value: A | undefined): Option<A>;
+
+    /**
+     * Create an {@link Option} from the output of {@link IOption.toJSON}.
+     */
+    fromJSON<A>(doc: { result: boolean; value?: A }): Option<A>;
+
+    /**
+     * Test whether an unknown value is an {@link Option}.
+     *
+     * @example
+     * function assertOption(value: unknown): void {
+     *     if (Option.is(value)) {
+     *         value.assertSome();
+     *     }
+     * }
+     */
+    is(value: unknown): value is Option<unknown>;
+
+    /**
+     * The class constructor of {@link Option}s. You should never use this to
+     * construct {@link Option}s directly, preferring instead {@link Some} and
+     * {@link None}. It's exposed for use in `instanceof` checks, though
+     * calling {@link Option.is} to decide resultiness is preferred.
+     *
+     * @example
+     * import { expect } from "chai";
+     * expect(Some("pony")).to.be.an.instanceof(Option.Class);
+     */
+    Class: new () => OptionClass<unknown>;
+}
+
+/**
+ * Static methods on the {@link Option} object.
+ *
+ * @see IOptionStatic
+ */
+export const Option: IOptionStatic = {
+    from<A>(value: A | undefined): Option<A> {
+        return value === undefined ? None : Some(value as A);
+    },
+
+    fromJSON<A>(doc: { result: boolean; value?: A }): Option<A> {
+        return doc.result ? Some(doc.value as A) : None;
+    },
+
+    is(value: unknown): value is Option<unknown> {
+        return value instanceof OptionClass;
+    },
+
+    Class: OptionClass,
+};
 
 /**
  * Construct an {@link Option} containing the provided value.

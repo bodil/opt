@@ -53,6 +53,10 @@ class Option<A> implements IOption<A> {
         return this.isSome() ? Some(f(this.value)) : None;
     }
 
+    apply<B>(f: OptionType<(a: A) => B>): OptionType<B> {
+        return (this.isSome() && f.isSome()) ? Some(f.value(this.value)) : None;
+    }
+
     and<B>(option: OptionType<B>): OptionType<B> {
         return this.isNone() ? option : None;
     }
