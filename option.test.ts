@@ -1,6 +1,6 @@
 import { assertStrictEquals, assertType, IsExact } from "./test_deps.ts";
 
-import { Option, Some, None } from "./option.ts";
+import { None, Option, Some } from "./option.ts";
 
 Deno.test("type inference", () => {
     const a: Option<string> = Some("frob");

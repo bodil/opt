@@ -1,4 +1,4 @@
-import { IOption, None, Some, Option as OptionType } from "./option.ts";
+import { IOption, None, Option as OptionType, Some } from "./option.ts";
 import { Err, Ok, Result } from "./result.ts";
 
 class Option<A> implements IOption<A> {
@@ -82,7 +82,9 @@ class Option<A> implements IOption<A> {
     }
 
     toJSON(): { result: true; value: A } | { result: false } {
-        return this.isSome() ? { result: true, value: this.value } : { result: false };
+        return this.isSome()
+            ? { result: true, value: this.value }
+            : { result: false };
     }
 }
 

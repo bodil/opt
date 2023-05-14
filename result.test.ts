@@ -1,6 +1,11 @@
-import { assertInstanceOf, assertStrictEquals, assertType, IsExact } from "./test_deps.ts";
+import {
+    assertInstanceOf,
+    assertStrictEquals,
+    assertType,
+    IsExact,
+} from "./test_deps.ts";
 
-import { Result, Ok, Err } from "./result.ts";
+import { Err, Ok, Result } from "./result.ts";
 
 Deno.test("type inference", () => {
     const a: Result<string, Error> = Ok("frob");
