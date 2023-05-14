@@ -34,7 +34,7 @@ if (result.isOk()) {
 ```
 
 ```typescript
-import { Option, Some } from "https://deno.land/x/opt/result.ts";
+import { Option, Some } from "https://deno.land/x/opt/option.ts";
 
 const option: Option<Date> = Some(new Date());
 
