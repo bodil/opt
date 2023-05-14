@@ -82,7 +82,7 @@ export interface IOption<A> {
     /**
      * Assert that the {@link Option} contains a value.
      *
-     * Throws a {@link external:TypeError} if it doesn't.
+     * Throws a {@link TypeError} if it doesn't.
      */
     assertSome(): asserts this is Some<A>;
 

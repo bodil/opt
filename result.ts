@@ -23,6 +23,21 @@ export type Err<E> = { result: false; value: E };
 export type Result<A, E> = (Ok<A> | Err<E>) & IResult<A, E>;
 
 /**
+ * @external Promise
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise}
+ */
+
+/**
+ * @external DOMException
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/DOMException}
+ */
+
+/**
+ * @external AbortController
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/AbortController}
+ */
+
+/**
  * Methods available on {@link Result} objects.
  */
 export interface IResult<A, E> {
@@ -132,6 +147,13 @@ export interface IResult<A, E> {
     err(): Option<E>;
 
     /**
+     * Test if the {@link Result} is an {@link Err} containing a
+     * {@link DOMException} caused by an
+     * {@link AbortController} aborting.
+     */
+    isAborted(): this is Err<DOMException>;
+
+    /**
      * Convert a {@link Result} into a JSON structure for serialisation.
      */
     toJSON(): { result: boolean; value: A | E };
@@ -139,8 +161,8 @@ export interface IResult<A, E> {
 
 export const Result = {
     /**
-     * Convert a {@link external:Promise} returning `A` into a {@link external:Promise} returning a {@link Result} of either `A` or the `Error` type.
-     * The new {@link external:Promise} always succeeds, reflecting an error condition in the `Result` instead of the failure callback.
+     * Convert a {@link Promise} returning `A` into a {@link Promise} returning a {@link Result} of either `A` or the `Error` type.
+     * The new {@link Promise} always succeeds, reflecting an error condition in the `Result` instead of the failure callback.
      */
     await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>> {
         return m.then(Ok, Err);

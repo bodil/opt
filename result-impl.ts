@@ -111,12 +111,15 @@ class Result<A, E> implements IResult<A, E> {
         return this.isErr() ? Some(this.value) : None;
     }
 
-    toJSON(): { result: boolean; value: A | E } {
-        return { result: this.result, value: this.value };
+    isAborted(): this is Err<DOMException> {
+        return (
+            this.isErr() && this.value instanceof DOMException &&
+            this.value.name === "AbortError"
+        );
     }
 
-    fromJSON(doc: { result: boolean; value: A | E }): ResultType<A, E> {
-        return doc.result ? Ok(doc.value as A) : Err(doc.value as E);
+    toJSON(): { result: boolean; value: A | E } {
+        return { result: this.result, value: this.value };
     }
 }
 
