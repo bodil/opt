@@ -18,8 +18,8 @@ export type None = { result: false; value: never };
  *
  * @template A The type of the contained value.
  *
- * @see IOption
- * @see IOptionStatic
+ * @see {@link IOption} for methods on {@link Option} objects
+ * @see {@link IOptionStatic} for static methods in the {@link Option} namespace
  */
 export type Option<A> = (Some<A> | None) & IOption<A>;
 

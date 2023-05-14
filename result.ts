@@ -21,8 +21,8 @@ export type Err<E> = { result: false; value: E };
  * @template A The type of the success value.
  * @template E The type of the error value.
  *
- * @see IResult
- * @see IResultStatic
+ * @see {@link IResult} for methods on {@link Result} objects
+ * @see {@link IResultStatic} for static methods in the {@link Result} namespace
  *
  * @example
  * function processResult(result: Result<string, Error>): void {
