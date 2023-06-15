@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2023-06-15
+
+### FIXED
+
+- Removed the interface declaration for static methods on `Option` and `Result`,
+  which was added because `deno doc` doesn't render the docs for the static
+  object well, because it ended up confusing the type checker to the point of
+  unusability.
+
 ## [0.1.3] - 2023-05-14
 
 - Added `apply()` to `Option`.
