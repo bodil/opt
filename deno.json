@@ -1,23 +1,5 @@
 {
-    "lint": {
-        "exclude": [
-            "npm"
-        ]
-    },
-    "test": {
-        "exclude": [
-            "npm"
-        ]
-    },
-    "fmt": {
-        "exclude": [
-            "npm"
-        ],
-        "indentWidth": 4
-    },
-    "bench": {
-        "exclude": [
-            "npm"
-        ]
-    }
+  "exclude": [
+    "npm"
+  ]
 }
