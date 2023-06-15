@@ -19,7 +19,6 @@ export type None = { result: false; value: never };
  * @template A The type of the contained value.
  *
  * @see {@link IOption} for methods on {@link Option} objects
- * @see {@link IOptionStatic} for static methods in the {@link Option} namespace
  */
 export type Option<A> = (Some<A> | None) & IOption<A>;
 
@@ -133,8 +132,6 @@ export interface IOption<A> {
 
     /**
      * Convert the {@link Option} into an optional value of `A`.
-     *
-     * @see IOptionStatic.from
      */
     unwrap(): A | undefined;
 
@@ -147,7 +144,7 @@ export interface IOption<A> {
 /**
  * Static methods on the {@link Option} object.
  */
-export interface IOptionStatic {
+export const Option = {
     /**
      * Create an {@link Option} from a value that's either `A` or `undefined`.
      *
@@ -162,12 +159,16 @@ export interface IOptionStatic {
      *     return Option.from(array[index]);
      * }
      */
-    from<A>(value: A | undefined): Option<A>;
+    from<A>(value: A | undefined): Option<A> {
+        return value === undefined ? None : Some(value as A);
+    },
 
     /**
      * Create an {@link Option} from the output of {@link IOption.toJSON}.
      */
-    fromJSON<A>(doc: { result: boolean; value?: A }): Option<A>;
+    fromJSON<A>(doc: { result: boolean; value?: A }): Option<A> {
+        return doc.result ? Some(doc.value as A) : None;
+    },
 
     /**
      * Test whether an unknown value is an {@link Option}.
@@ -179,7 +180,9 @@ export interface IOptionStatic {
      *     }
      * }
      */
-    is(value: unknown): value is Option<unknown>;
+    is(value: unknown): value is Option<unknown> {
+        return value instanceof OptionClass;
+    },
 
     /**
      * The class constructor of {@link Option}s. You should never use this to
@@ -191,27 +194,6 @@ export interface IOptionStatic {
      * import { expect } from "chai";
      * expect(Some("pony")).to.be.an.instanceof(Option.Class);
      */
-    Class: new () => OptionClass<unknown>;
-}
-
-/**
- * Static methods on the {@link Option} object.
- *
- * @see IOptionStatic
- */
-export const Option: IOptionStatic = {
-    from<A>(value: A | undefined): Option<A> {
-        return value === undefined ? None : Some(value as A);
-    },
-
-    fromJSON<A>(doc: { result: boolean; value?: A }): Option<A> {
-        return doc.result ? Some(doc.value as A) : None;
-    },
-
-    is(value: unknown): value is Option<unknown> {
-        return value instanceof OptionClass;
-    },
-
     Class: OptionClass,
 };
 

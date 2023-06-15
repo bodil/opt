@@ -22,7 +22,6 @@ export type Err<E> = { result: false; value: E };
  * @template E The type of the error value.
  *
  * @see {@link IResult} for methods on {@link Result} objects
- * @see {@link IResultStatic} for static methods in the {@link Result} namespace
  *
  * @example
  * function processResult(result: Result<string, Error>): void {
@@ -187,7 +186,7 @@ export interface IResult<A, E> {
 /**
  * Static methods on the {@link Result} object.
  */
-export interface IResultStatic {
+export const Result = {
     /**
      * Convert a {@link Promise} returning `A` into a {@link Promise} returning a {@link Result} of either `A` or the `Error` type.
      * The new {@link Promise} always succeeds, reflecting an error condition in the `Result` instead of the failure callback.
@@ -198,7 +197,9 @@ export interface IResultStatic {
      *     console.error(fetchResult.value.message);
      * }
      */
-    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>>;
+    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>> {
+        return m.then(Ok, Err);
+    },
 
     /**
      * Run a function and return its result as an {@link Ok} if it didn't throw any
@@ -213,12 +214,25 @@ export interface IResultStatic {
      *     console.error(tryFn.value.message);
      * }
      */
-    try<A, E = unknown>(f: () => A): Result<A, E>;
+    try<A, E = unknown>(f: () => A): Result<A, E> {
+        try {
+            return Ok(f());
+        } catch (e) {
+            return Err(e as E);
+        }
+    },
 
     /**
      * Create a {@link Result} from the output of {@link IResult.toJSON}.
      */
-    fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E>;
+    fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E> {
+        return (doc.result
+            ? Ok(doc.value as A)
+            : Err(doc.value as E)) as Result<
+                A,
+                E
+            >;
+    },
 
     /**
      * Test whether an unknown value is a {@link Result}.
@@ -230,7 +244,9 @@ export interface IResultStatic {
      *     }
      * }
      */
-    is(value: unknown): value is Result<unknown, unknown>;
+    is(value: unknown): value is Result<unknown, unknown> {
+        return value instanceof ResultClass;
+    },
 
     /**
      * The class constructor of {@link Result}s. You should never use this to
@@ -242,38 +258,6 @@ export interface IResultStatic {
      * import { expect } from "chai";
      * expect(Ok("stop dots")).to.be.an.instanceof(Result.Class);
      */
-    Class: new () => ResultClass<unknown, unknown>;
-}
-
-/**
- * Static methods on the {@link Result} object.
- *
- * @see IResultStatic
- */
-export const Result: IResultStatic = {
-    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>> {
-        return m.then(Ok, Err);
-    },
-
-    try<A, E = unknown>(f: () => A): Result<A, E> {
-        try {
-            return Ok(f());
-        } catch (e) {
-            return Err(e as E);
-        }
-    },
-
-    // @ts-ignore: tsc gets confused about this type signature vs the interface.
-    fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E> {
-        return (doc.result
-            ? Ok(doc.value as A)
-            : Err(doc.value as E)) as Result<A, E>;
-    },
-
-    is(value: unknown): value is Result<unknown, unknown> {
-        return value instanceof ResultClass;
-    },
-
     Class: ResultClass,
 };
 
