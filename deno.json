@@ -1,5 +1,12 @@
 {
-  "exclude": [
-    "npm"
-  ]
+    "exclude": [
+        "npm"
+    ],
+    "fmt": {
+        "useTabs": false,
+        "indentWidth": 4,
+        "semiColons": true,
+        "singleQuote": false,
+        "proseWrap": "preserve"
+    }
 }
