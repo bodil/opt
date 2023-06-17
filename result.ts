@@ -98,6 +98,16 @@ export interface IResult<A, E> {
     chainErr<F>(f: (value: E) => Result<A, F>): Result<A, F>;
 
     /**
+     * Transform the {@link Result} as in {@link IResult.chain} using one of the
+     * two provided functions, according to whether the {@link Result} is
+     * {@link Ok} or {@link Err}.
+     */
+    bichain<B, F>(
+        ok: (okValue: A) => Result<B, F>,
+        err: (errValue: E) => Result<B, F>,
+    ): Result<B, F>;
+
+    /**
      * If the {@link Result} is {@link Ok}, transform its contained value using the provided function.
      */
     map<B>(f: (value: A) => B): Result<B, E>;

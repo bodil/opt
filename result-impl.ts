@@ -55,6 +55,13 @@ class Result<A, E> implements IResult<A, E> {
         return this as unknown as ResultType<A, F>;
     }
 
+    bichain<B, F>(
+        ok: (okValue: A) => ResultType<B, F>,
+        err: (errValue: E) => ResultType<B, F>,
+    ): ResultType<B, F> {
+        return this.isOk() ? ok(this.value) : err(this.value as E);
+    }
+
     map<B>(f: (value: A) => B): ResultType<B, E> {
         if (this.isOk()) {
             return Ok(f(this.value));
@@ -69,7 +76,10 @@ class Result<A, E> implements IResult<A, E> {
         return this as unknown as ResultType<A, F>;
     }
 
-    bimap<B, F>(ok: (v: A) => B, err: (v: E) => F): ResultType<B, F> {
+    bimap<B, F>(
+        ok: (okValue: A) => B,
+        err: (errValue: E) => F,
+    ): ResultType<B, F> {
         return this.isOk() ? Ok(ok(this.value)) : Err(err(this.value as E));
     }
 
