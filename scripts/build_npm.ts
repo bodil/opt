@@ -89,7 +89,7 @@ await Deno.writeFile(
         "excludeNotDocumented": false,
         "excludeInternal": true,
         // "theme": "hierarchy",
-        "includeVersion": true,
+        "includeVersion": false,
         "plugin": ["typedoc-plugin-mdn-links"],
     })),
 );
