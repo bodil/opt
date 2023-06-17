@@ -22,27 +22,6 @@ jobs:
             - uses: actions/setup-node@v3
               with:
                   node-version: latest
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v2.2.4
-              with:
-                  version: latest
-                  run_install: false
-            - name: Get pnpm store path
-              id: pnpm-cache-dir
-              shell: bash
-              run: |
-                  echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - name: Setup pnpm cache
-              uses: actions/cache@v3
-              id: pnpm-cache
-              with:
-                  path: |
-                      ~/.cache
-                      ~/.pnpm
-                      ${{ steps.pnpm-cache-dir.outputs.STORE_PATH }}
-                  key: ${{ runner.os }}-pnpm-${{ hashfiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pnpm-
             - name: Get tag version
               if: startsWith(github.ref, 'refs/tags/')
               id: get_tag_version
@@ -53,4 +32,4 @@ jobs:
               if: startsWith(github.ref, 'refs/tags/')
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: cd npm && pnpm publish --no-git-checks
+              run: cd npm && npm publish --no-git-checks

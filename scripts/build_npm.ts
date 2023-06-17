@@ -28,7 +28,6 @@ await build({
     scriptModule: false,
     entryPoints: ["./mod.ts"],
     outDir: "./npm",
-    packageManager: "pnpm",
     shims: {
         // see JS docs for overview and more options
         deno: "dev",
@@ -54,6 +53,10 @@ await build({
         Deno.copyFileSync("README.md", "npm/README.md");
     },
 });
+
+if (version !== undefined) {
+    Deno.exit(0);
+}
 
 await Deno.writeFile(
     "./npm/tsconfig.json",
@@ -93,14 +96,14 @@ await Deno.writeFile(
         "plugin": ["typedoc-plugin-mdn-links"],
     })),
 );
-await new Deno.Command("pnpm", {
+await new Deno.Command("npm", {
     args: ["add", "-D", "typedoc", "typedoc-plugin-mdn-links"],
     cwd: "./npm",
     stdout: "inherit",
     stderr: "inherit",
 }).output();
-await new Deno.Command("pnpm", {
-    args: ["typedoc"],
+await new Deno.Command("npm", {
+    args: ["exec", "typedoc"],
     cwd: "./npm",
     stdout: "inherit",
     stderr: "inherit",
