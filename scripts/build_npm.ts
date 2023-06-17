@@ -8,21 +8,18 @@ async function getGitTags(): Promise<string[]> {
         }).output()).stdout,
     ).split("\n");
     versions.pop();
-    console.log("Git tags found:", versions);
     return versions;
 }
 
-let version = (Deno.args.length > 0 && Deno.args[0].trim() !== "")
+const version = Deno.args[0] !== "auto"
     ? Deno.args[0]
     : (await getGitTags()).shift();
 if (
-    version === undefined ||
+    version !== undefined &&
     /^[0-9]+\.[0-9]+\.[0-9]+$/.exec(version) === null
 ) {
-    console.error(
-        "Unable to determine version and none provided. Will use 0.0.0.",
-    );
-    version = "0.0.0";
+    console.error("Invalid version provided (or detected):", version);
+    Deno.exit(1);
 }
 
 await emptyDir("./npm");
@@ -40,7 +37,7 @@ await build({
     package: {
         // package.json properties
         name: "@bodil/opt",
-        version,
+        version: version!,
         description: "Option types for TypeScript with real gradual typing.",
         license: "MPL-2.0+",
         repository: {
