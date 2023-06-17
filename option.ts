@@ -16,9 +16,15 @@ export type None = { result: false; value: never };
  * `Option<A>` provides a nullable value of type `A`. It's essentially the same
  * as `A | undefined` but with a lot of useful methods attached.
  *
+ * You can construct an {@link Option} using either the {@link Some} function to
+ * wrap a present value of `A`, or the value {@link None} to signify a null
+ * value. You can also convert a value that's `A | undefined` into an
+ * {@link Option} by calling {@link Option.from}.
+ *
  * @template A The type of the contained value.
  *
  * @see {@link IOption} for methods on {@link Option} objects
+ * @see {@link Option} for static methods in the {@link Option} namespace
  */
 export type Option<A> = (Some<A> | None) & IOption<A>;
 
@@ -48,7 +54,7 @@ export interface IOption<A> {
     /**
      * Assert that the {@link Option} is empty.
      *
-     * Throws a {@link external:TypeError} if it isn't.
+     * Throws a {@link TypeError} if it isn't.
      */
     assertNone(): asserts this is None;
 

@@ -13,15 +13,23 @@ export type Err<E> = { result: false; value: E };
 /**
  * A value which can be of either type `A` or type `E`.
  *
- * This is normally used as a return value for operations which can fail: `E` is short for `Error`.
- * `A` can be thought of as the success value, and `E` is the
+ * This is normally used as a return value for operations which can fail: `E` is
+ * short for `Error`. `A` can be thought of as the success value, and `E` is the
  * error value. This is reflected in their constructors: to construct a success
- * value, you call {@link Ok}, and to construct an error value, you call {@link Err}.
+ * value, you call {@link Ok}, and to construct an error value, you call
+ * {@link Err}.
+ *
+ * You can also use the {@link Result.await} function to convert a
+ * {@link Promise} that could throw an exception into a {@link Promise} that
+ * won't throw but instead returns a {@link Result} containing either the error
+ * or the expected result, or the {@link Result.try} function to run a function
+ * and catch any exceptions into a {@link Result} return value.
  *
  * @template A The type of the success value.
  * @template E The type of the error value.
  *
  * @see {@link IResult} for methods on {@link Result} objects
+ * @see {@link Result} for static methods in the {@link Result} namespace
  *
  * @example
  * function processResult(result: Result<string, Error>): void {
@@ -56,11 +64,15 @@ export interface IResult<A, E> {
 
     /**
      * Assert that the {@link Result} is {@link Ok}.
+     *
+     * Throws a {@link TypeError} if it isn't.
      */
     assertOk(): asserts this is Ok<A>;
 
     /**
      * Assert that the {@link Result} is {@link Err}.
+     *
+     * Throws a {@link TypeError} if it isn't.
      */
     assertErr(): asserts this is Err<E>;
 
