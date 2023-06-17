@@ -53,4 +53,4 @@ jobs:
               if: startsWith(github.ref, 'refs/tags/')
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: cd npm && pnpm publish
+              run: cd npm && pnpm publish --no-git-checks
