@@ -42,8 +42,8 @@ const option: Option<Date> = Some(new Date());
 // option.value is Date | undefined here.
 
 if (option.isSome()) {
-    // the type checker now knows Option.value is definitely a Date.
-    console.log("Date:", result.value.toLocaleString());
+    // the type checker now knows option.value is definitely a Date.
+    console.log("Date:", option.value.toLocaleString());
 } else {
     console.log("No value!");
 }
