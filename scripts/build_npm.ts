@@ -1,11 +1,13 @@
 // ex. scripts/build_npm.ts
 import { build, emptyDir } from "https://deno.land/x/dnt@0.35.0/mod.ts";
 
-const version = Deno.args[0] ?? new TextDecoder().decode(
-    (await new Deno.Command("git", {
-        args: ["tag", "--sort=-version:refname"],
-    }).output()).stdout,
-).split("\n").shift();
+const version = (Deno.args.length > 0 && Deno.args[0].trim() !== "")
+    ? Deno.args[0]
+    : new TextDecoder().decode(
+        (await new Deno.Command("git", {
+            args: ["tag", "--sort=-version:refname"],
+        }).output()).stdout,
+    ).split("\n").shift();
 if (
     version === undefined || version.trim().length < 1 ||
     /^[0-9]+\.[0-9]+\.[0-9]+$/.exec(version) === null
