@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2023-06-17
+
+### ADDED
+
+- We're now using [Typedoc](https://typedoc.org/) to generate docs for the
+  latest release at [https://github.bodil.lol/opt](https://github.bodil.lol/opt).
+- Added the `bichain()` method to `Result`, to match `bimap()`. Now you can
+  `chain()` and `chainErr()` in a single function! I'd call it a "bimonad" just
+  like `bimap()` makes it a bifunctor but that's apparently not a thing.
+
 ## [0.1.4] - 2023-06-15
 
 ### FIXED
