@@ -1,18 +1,28 @@
 // ex. scripts/build_npm.ts
 import { build, emptyDir } from "https://deno.land/x/dnt@0.35.0/mod.ts";
 
-const version = (Deno.args.length > 0 && Deno.args[0].trim() !== "")
-    ? Deno.args[0]
-    : new TextDecoder().decode(
+async function getGitTags(): Promise<string[]> {
+    const versions = new TextDecoder().decode(
         (await new Deno.Command("git", {
             args: ["tag", "--sort=-version:refname"],
         }).output()).stdout,
-    ).split("\n").shift();
+    ).split("\n");
+    versions.pop();
+    console.log("Git tags found:", versions);
+    return versions;
+}
+
+let version = (Deno.args.length > 0 && Deno.args[0].trim() !== "")
+    ? Deno.args[0]
+    : (await getGitTags()).shift();
 if (
-    version === undefined || version.trim().length < 1 ||
+    version === undefined ||
     /^[0-9]+\.[0-9]+\.[0-9]+$/.exec(version) === null
 ) {
-    throw new Error(`Invalid version string provided: "${version}"`);
+    console.error(
+        "Unable to determine version and none provided. Will use 0.0.0.",
+    );
+    version = "0.0.0";
 }
 
 await emptyDir("./npm");
