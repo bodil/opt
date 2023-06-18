@@ -2,6 +2,12 @@
 
 Option types for TypeScript with real gradual typing.
 
+## API Docs
+
+Find the API docs here:
+
+* [github.bodil.org/opt](https://github.bodil.org/opt)
+
 ## Rationale
 
 There are several million implementations of option types on NPM. Many of them
@@ -18,6 +24,8 @@ inspired by Rust's `Option` and `Result` types.
 
 ## Example
 
+[`Result`](http://github.bodil.lol/opt/types/Result.html) in Node:
+
 ```typescript
 import { Ok, Result } from "@bodil/opt";
 
@@ -33,6 +41,8 @@ if (result.isOk()) {
     console.log("Error:", result.value.message);
 }
 ```
+
+[`Option`](http://github.bodil.lol/opt/types/Option.html) in Deno:
 
 ```typescript
 import { Option, Some } from "https://deno.land/x/opt/option.ts";
