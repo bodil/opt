@@ -194,7 +194,7 @@ export const Option = {
      * The class constructor of {@link Option}s. You should never use this to
      * construct {@link Option}s directly, preferring instead {@link Some} and
      * {@link None}. It's exposed for use in `instanceof` checks, though
-     * calling {@link Option.is} to decide resultiness is preferred.
+     * calling {@link Option.is} to decide option-ness is preferred.
      *
      * @example
      * import { expect } from "chai";
