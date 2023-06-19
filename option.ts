@@ -104,7 +104,7 @@ export interface IOption<A> {
      * function's return value. If either {@link Option} is {@link None}, return
      * {@link None}.
      */
-    apply<B>(f: Option<(a: A) => B>): Option<B>;
+    ap<B>(f: Option<(a: A) => B>): Option<B>;
 
     /**
      * If the {@link Option} isn't empty, return the provided {@link Option} of `B`, otherwise return {@link None}.

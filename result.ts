@@ -148,7 +148,7 @@ export interface IResult<A, E> {
      * If the result in `f` is {@link Ok} but the original result is
      * {@link Err}, return the original error {@link Result} unchanged.
      */
-    apply<B>(f: Result<(a: A) => B, E>): Result<B, E>;
+    ap<B>(f: Result<(a: A) => B, E>): Result<B, E>;
 
     /**
      * If the {@link Result} is {@link Ok}, return the provided {@link Result} of `B`,
@@ -248,12 +248,7 @@ export const Result = {
      * Create a {@link Result} from the output of {@link IResult.toJSON}.
      */
     fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E> {
-        return (doc.result
-            ? Ok(doc.value as A)
-            : Err(doc.value as E)) as Result<
-                A,
-                E
-            >;
+        return doc.result ? Ok(doc.value as A) : Err(doc.value as E);
     },
 
     /**

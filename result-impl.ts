@@ -83,7 +83,7 @@ class Result<A, E> implements IResult<A, E> {
         return this.isOk() ? Ok(ok(this.value)) : Err(err(this.value as E));
     }
 
-    apply<B>(f: ResultType<(a: A) => B, E>): ResultType<B, E> {
+    ap<B>(f: ResultType<(a: A) => B, E>): ResultType<B, E> {
         if (f.isErr()) {
             return f as unknown as ResultType<B, E>;
         }
