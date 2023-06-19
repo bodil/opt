@@ -6,7 +6,7 @@ Option types for TypeScript with real gradual typing.
 
 Find the API docs here:
 
-* [github.bodil.org/opt](https://github.bodil.org/opt)
+* [github.bodil.lol/opt](https://github.bodil.lol/opt)
 
 ## Rationale
 
