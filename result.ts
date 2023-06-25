@@ -245,6 +245,32 @@ export const Result = {
     },
 
     /**
+     * Turn a function that returns `A` and potentially throws `E` into a function that
+     * catches `E` if thrown and returns `Result<A, E>`.
+     *
+     * Beware that TypeScript's type inference isn't currently very good at
+     * this, so you should explicitly provide the target function signature when
+     * using this function, or you're likely to end up with a `Result<unknown, unknown>`
+     * instead of the expected `Result<A, E>`.
+     *
+     * @example
+     * function div(n: number, by: number): number {
+     *     if (by === 0) {
+     *         throw new RangeError("division by zero");
+     *     }
+     *     return n / by;
+     * }
+     * const liftedDiv: (n: number, by: number) => Result<number, RangeError> =
+     *     Result.lift(div);
+     */
+    // deno-lint-ignore no-explicit-any
+    lift<A, F extends (...args: any[]) => A, E = unknown>(
+        fn: F,
+    ): (...args: Parameters<F>) => Result<A, E> {
+        return (...args) => Result.try(() => fn(...args));
+    },
+
+    /**
      * Create a {@link Result} from the output of {@link IResult.toJSON}.
      */
     fromJSON<A, E>(doc: { result: boolean; value: A | E }): Result<A, E> {

@@ -170,6 +170,28 @@ export const Option = {
     },
 
     /**
+     * Turn a function that returns `A | undefined` into a function that
+     * returns `Option<A>`.
+     *
+     * Beware that TypeScript's type inference isn't currently very good at
+     * this, so you should explicitly provide the target function signature when
+     * using this function, or you're likely to end up with an `Option<unknown>`
+     * instead of the expected `Option<A>`.
+     *
+     * @example
+     * function nonNeg(n: number): number | undefined {
+     *     return n >= 0 ? n : undefined;
+     * }
+     * const liftedNonNeg: (n: number) => Option<number> = Option.lift(nonNeg);
+     */
+    // deno-lint-ignore no-explicit-any
+    lift<A, F extends (...args: any[]) => A | undefined>(
+        fn: F,
+    ): (...args: Parameters<F>) => Option<A> {
+        return (...args) => Option.from(fn(...args));
+    },
+
+    /**
      * Create an {@link Option} from the output of {@link IOption.toJSON}.
      */
     fromJSON<A>(doc: { result: boolean; value?: A }): Option<A> {

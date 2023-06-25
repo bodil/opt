@@ -1,11 +1,13 @@
 import {
     assertInstanceOf,
     assertStrictEquals,
+    assertThrows,
     assertType,
     IsExact,
 } from "./test_deps.ts";
 
 import { Err, Ok, Result } from "./result.ts";
+import { assertIsErr, assertOk } from "./asserts.ts";
 
 Deno.test("type inference", () => {
     const a: Result<string, Error> = Ok("frob");
@@ -73,4 +75,20 @@ Deno.test("class name", () => {
 
     const e = Err(null);
     assertStrictEquals(Object.getPrototypeOf(e).constructor.name, "Result");
+});
+
+Deno.test("lift function", () => {
+    function div(n: number, by: number): number {
+        if (by === 0) {
+            throw new RangeError("division by zero");
+        }
+        return n / by;
+    }
+    assertStrictEquals(div(4, 2), 2);
+    assertThrows(() => div(4, 0));
+
+    const liftedDiv: (n: number, by: number) => Result<number, RangeError> =
+        Result.lift(div);
+    assertOk(liftedDiv(4, 2), 2);
+    assertIsErr(liftedDiv(4, 0));
 });

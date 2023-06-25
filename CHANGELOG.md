@@ -10,6 +10,11 @@ and this project adheres to
 
 ### ADDED
 
+- Added `Option.lift()` for turning a function that returns `A | undefined` into
+  a function that returns `Option<A>` and `Result.lift()` for turning a function
+  that returns `A` and can throw an exception `E` into a function that returns
+  `Result<A, E>`. These are the higher order function equivalents of
+  `Option.from()` and `Result.try()` respectively.
 - Asserts for `deno test` are now available in `asserts.ts`. These are not
   exported to the NPM package.
 

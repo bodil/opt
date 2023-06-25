@@ -1,6 +1,7 @@
 import { assertStrictEquals, assertType, IsExact } from "./test_deps.ts";
 
 import { None, Option, Some } from "./option.ts";
+import { assertNone, assertSome } from "./asserts.ts";
 
 Deno.test("type inference", () => {
     const a: Option<string> = Some("frob");
@@ -37,4 +38,20 @@ Deno.test("class name", () => {
 
     const e = None;
     assertStrictEquals(Object.getPrototypeOf(e).constructor.name, "Option");
+});
+
+Deno.test("lift function", () => {
+    function nonNegativeNumber(n: number): number | undefined {
+        return n >= 0 ? n : undefined;
+    }
+    assertStrictEquals(nonNegativeNumber(5), 5);
+    assertStrictEquals(nonNegativeNumber(0), 0);
+    assertStrictEquals(nonNegativeNumber(-5), undefined);
+
+    const liftedNonNegativeNumber: (n: number) => Option<number> = Option.lift(
+        nonNegativeNumber,
+    );
+    assertSome(liftedNonNegativeNumber(5), 5);
+    assertSome(liftedNonNegativeNumber(0), 0);
+    assertNone(liftedNonNegativeNumber(-5));
 });
