@@ -183,6 +183,12 @@ export interface IResult<A, E> {
     unwrapErr(): E | undefined;
 
     /**
+     * Converts a {@link Result} into a value of `A` if it contains one. If it
+     * contains a value of `E`, throw that as an exception.
+     */
+    unwrapExact(): A;
+
+    /**
      * Converts a {@link Result} into an {@link Option} of the success value, discarding any error value.
      */
     ok(): Option<A>;

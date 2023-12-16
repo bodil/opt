@@ -142,6 +142,12 @@ export interface IOption<A> {
     unwrap(): A | undefined;
 
     /**
+     * Convert the {@link Option} into a value of `A`, throwing a {@link TypeError}
+     * when empty, optionally with the provided error message.
+     */
+    unwrapExact(message?: string): A;
+
+    /**
      * Convert an {@link Option} into a JSON structure for serialisation.
      */
     toJSON(): { result: true; value: A } | { result: false };

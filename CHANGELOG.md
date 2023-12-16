@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2023-12-16
+
+### ADDED
+
+- Added an `unwrapExact()` method to both `Option` and `Result`, which works
+  like `unwrap()` except that it throws an error when the value isn't `Some`/`Ok`.
+
 ## [0.2.1] - 2023-06-25
 
 ### ADDED

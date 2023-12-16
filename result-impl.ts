@@ -117,6 +117,14 @@ class Result<A, E> implements IResult<A, E> {
         return this.isErr() ? this.value : undefined;
     }
 
+    unwrapExact(): A {
+        if (this.isErr()) {
+            throw this.value;
+        } else {
+            return this.value as A;
+        }
+    }
+
     ok(): Option<A> {
         return this.isOk() ? Some(this.value) : None;
     }

@@ -1,4 +1,9 @@
-import { assertStrictEquals, assertType, IsExact } from "./test_deps.ts";
+import {
+    assertStrictEquals,
+    assertThrows,
+    assertType,
+    IsExact,
+} from "./test_deps.ts";
 
 import { None, Option, Some } from "./option.ts";
 import { assertNone, assertSome } from "./asserts.ts";
@@ -54,4 +59,11 @@ Deno.test("lift function", () => {
     assertSome(liftedNonNegativeNumber(5), 5);
     assertSome(liftedNonNegativeNumber(0), 0);
     assertNone(liftedNonNegativeNumber(-5));
+});
+
+Deno.test("unwrapExact", () => {
+    const a = Some(5);
+    assertStrictEquals(a.unwrapExact(), 5);
+    const b = None;
+    assertThrows(() => b.unwrapExact());
 });

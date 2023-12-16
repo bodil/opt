@@ -92,3 +92,10 @@ Deno.test("lift function", () => {
     assertOk(liftedDiv(4, 2), 2);
     assertIsErr(liftedDiv(4, 0));
 });
+
+Deno.test("unwrapExact", () => {
+    const a = Ok(5);
+    assertStrictEquals(a.unwrapExact(), 5);
+    const b = Err(new Error());
+    assertThrows(() => b.unwrapExact());
+});

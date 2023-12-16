@@ -85,6 +85,16 @@ class Option<A> implements IOption<A> {
         return this.isSome() ? this.value : undefined;
     }
 
+    unwrapExact(message?: string): A {
+        if (this.isNone()) {
+            throw new TypeError(
+                message ?? "Option.unwrapThrow(): value was None",
+            );
+        } else {
+            return this.value;
+        }
+    }
+
     toJSON(): { result: true; value: A } | { result: false } {
         return this.isSome()
             ? { result: true, value: this.value }
