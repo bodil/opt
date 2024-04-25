@@ -1,4 +1,11 @@
 {
+    "name": "@bodil/opt",
+    "version": "0.2.2",
+    "exports": {
+        ".": "./mod.ts",
+        "./option": "./option.ts",
+        "./result": "./result.ts"
+    },
     "exclude": [
         "npm"
     ],
