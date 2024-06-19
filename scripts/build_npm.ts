@@ -31,6 +31,7 @@ await build({
         // see JS docs for overview and more options
         deno: "dev",
     },
+    declaration: "separate",
     compilerOptions: { lib: ["ESNext", "DOM"] },
     package: {
         // package.json properties
@@ -103,7 +104,7 @@ await new Deno.Command("npm", {
 }).output();
 
 await new Deno.Command("npm", {
-    args: ["exec", "typedoc", "--", "--entryPointStrategy", "expand", "./src"],
+    args: ["exec", "typedoc"],
     cwd: "./npm",
     stdout: "inherit",
     stderr: "inherit",
