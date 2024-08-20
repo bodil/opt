@@ -3,10 +3,10 @@ import {
     assertStrictEquals,
     assertThrows,
     assertType,
-    IsExact,
+    type IsExact,
 } from "./test_deps.ts";
 
-import { Err, Ok, Result } from "./result.ts";
+import { Err, type ErrType, Ok, type OkType, Result } from "./result.ts";
 import { assertIsErr, assertOk } from "./asserts.ts";
 
 Deno.test("type inference", () => {
@@ -98,4 +98,10 @@ Deno.test("unwrapExact", () => {
     assertStrictEquals(a.unwrapExact(), 5);
     const b = Err(new Error());
     assertThrows(() => b.unwrapExact());
+});
+
+Deno.test("OkType | ErrType", () => {
+    type testType = Result<"yes" | "no" | boolean, "oops" | Error>;
+    assertType<IsExact<OkType<testType>, "yes" | "no" | boolean>>(true);
+    assertType<IsExact<ErrType<testType>, "oops" | Error>>(true);
 });

@@ -1,4 +1,4 @@
-import { Option } from "./option.ts";
+import type { Option } from "./option.ts";
 import { ResultClass } from "./result-impl.ts";
 
 /**
@@ -337,3 +337,23 @@ export function Err<E, A = any>(e: E): Result<A, E> {
     o.value = e;
     return o;
 }
+
+/**
+ * Extract the type of the success value from a {@link Result} type.
+ *
+ * @example
+ * type VoteResult = Result<"yes" | "no", Error>;
+ * type VoteOk = OkType<VoteResult>; // "yes" | "no"
+ */
+// deno-lint-ignore no-explicit-any
+export type OkType<T> = T extends Result<infer A, any> ? A : never;
+
+/**
+ * Extract the type of the error value from a {@link Result} type.
+ *
+ * @example
+ * type VoteResult = Result<"yes" | "no", Error>;
+ * type VoteErr = ErrType<VoteResult>; // Error
+ */
+// deno-lint-ignore no-explicit-any
+export type ErrType<T> = T extends Result<any, infer E> ? E : never;

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Added utility types `SomeType<T>`, `OkType<T>` and `ErrType<T>` to extract
+  type arguments from an `Option` or `Result` type signature.
+
 ## [0.2.2] - 2023-12-16
 
 ### ADDED

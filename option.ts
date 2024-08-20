@@ -1,6 +1,6 @@
 import { OptionClass } from "./option-impl.ts";
 
-import { Result } from "./result.ts";
+import type { Result } from "./result.ts";
 
 /**
  * An {@link Option} containing a value.
@@ -253,3 +253,12 @@ export function Some<A>(value: A): Option<A> {
 // deno-lint-ignore no-explicit-any
 export const None: Option<any> = Object.create(OptionClass.prototype);
 None.result = false;
+
+/**
+ * Extract the value type from an {@link Option} type.
+ *
+ * @example
+ * type VoteOption = Option<"yes" | "no">;
+ * type VoteValue = SomeType<VoteOption>; // "yes" | "no"
+ */
+export type SomeType<T> = T extends Option<infer A> ? A : never;

@@ -2,10 +2,10 @@ import {
     assertStrictEquals,
     assertThrows,
     assertType,
-    IsExact,
+    type IsExact,
 } from "./test_deps.ts";
 
-import { None, Option, Some } from "./option.ts";
+import { None, Option, Some, type SomeType } from "./option.ts";
 import { assertNone, assertSome } from "./asserts.ts";
 
 Deno.test("type inference", () => {
@@ -66,4 +66,9 @@ Deno.test("unwrapExact", () => {
     assertStrictEquals(a.unwrapExact(), 5);
     const b = None;
     assertThrows(() => b.unwrapExact());
+});
+
+Deno.test("OptionType", () => {
+    type testType = Option<"yes" | "no" | boolean>;
+    assertType<IsExact<SomeType<testType>, "yes" | "no" | boolean>>(true);
 });

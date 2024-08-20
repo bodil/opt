@@ -1,5 +1,5 @@
-import { Err, IResult, Ok, Result as ResultType } from "./result.ts";
-import { None, Option, Some } from "./option.ts";
+import { Err, type IResult, Ok, type Result as ResultType } from "./result.ts";
+import { None, type Option, Some } from "./option.ts";
 
 class Result<A, E> implements IResult<A, E> {
     readonly result!: boolean;
