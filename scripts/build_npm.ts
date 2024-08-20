@@ -1,5 +1,5 @@
 // ex. scripts/build_npm.ts
-import { build, emptyDir } from "https://deno.land/x/dnt@0.35.0/mod.ts";
+import { build, emptyDir } from "https://deno.land/x/dnt@0.40.0/mod.ts";
 
 async function getGitTags(): Promise<string[]> {
     const versions = new TextDecoder().decode(
@@ -25,14 +25,14 @@ if (
 await emptyDir("./npm");
 
 await build({
-    scriptModule: false,
     entryPoints: ["./mod.ts"],
     outDir: "./npm",
     shims: {
         // see JS docs for overview and more options
         deno: "dev",
     },
-    compilerOptions: { lib: ["esnext", "dom"] },
+    declaration: "separate",
+    compilerOptions: { lib: ["ESNext", "DOM"] },
     package: {
         // package.json properties
         name: "@bodil/opt",
@@ -102,6 +102,7 @@ await new Deno.Command("npm", {
     stdout: "inherit",
     stderr: "inherit",
 }).output();
+
 await new Deno.Command("npm", {
     args: ["exec", "typedoc"],
     cwd: "./npm",
