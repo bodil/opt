@@ -1,19 +1,9 @@
 // ex. scripts/build_npm.ts
 import { build, emptyDir } from "https://deno.land/x/dnt@0.40.0/mod.ts";
 
-async function getGitTags(): Promise<string[]> {
-    const versions = new TextDecoder().decode(
-        (await new Deno.Command("git", {
-            args: ["tag", "--sort=-version:refname"],
-        }).output()).stdout,
-    ).split("\n");
-    versions.pop();
-    return versions;
-}
-
-const version = Deno.args[0] !== "auto"
-    ? Deno.args[0]
-    : (await getGitTags()).shift();
+const version =
+    JSON.parse(new TextDecoder().decode(Deno.readFileSync("./deno.json")))
+        .version;
 if (
     version !== undefined &&
     /^[0-9]+\.[0-9]+\.[0-9]+$/.exec(version) === null
