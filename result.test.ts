@@ -105,3 +105,9 @@ Deno.test("OkType | ErrType", () => {
     assertType<IsExact<OkType<testType>, "yes" | "no" | boolean>>(true);
     assertType<IsExact<ErrType<testType>, "oops" | Error>>(true);
 });
+
+Deno.test("await type", () => {
+    function foo(_p: Promise<Result<void, Error>>) {}
+    const p = Result.await(Promise.resolve());
+    foo(p);
+});

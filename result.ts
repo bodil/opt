@@ -211,6 +211,16 @@ export interface IResult<A, E> {
     toJSON(): { result: boolean; value: A | E };
 }
 
+function awaitImpl<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>>;
+function awaitImpl<A, E extends Error>(
+    m: PromiseLike<A>,
+): PromiseLike<Result<A, E>>;
+function awaitImpl<A, E extends Error>(
+    m: PromiseLike<A>,
+): PromiseLike<Result<A, E>> {
+    return m.then(Ok, Err);
+}
+
 /**
  * Static methods on the {@link Result} object.
  */
@@ -225,9 +235,7 @@ export const Result = {
      *     console.error(fetchResult.value.message);
      * }
      */
-    await<A, E extends Error>(m: PromiseLike<A>): PromiseLike<Result<A, E>> {
-        return m.then(Ok, Err);
-    },
+    await: awaitImpl,
 
     /**
      * Run a function and return its result as an {@link Ok} if it didn't throw any
