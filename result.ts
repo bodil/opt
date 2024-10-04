@@ -225,7 +225,7 @@ export const Result = {
      *     console.error(fetchResult.value.message);
      * }
      */
-    await<A, E extends Error>(m: Promise<A>): Promise<Result<A, E>> {
+    await<A, E extends Error>(m: PromiseLike<A>): PromiseLike<Result<A, E>> {
         return m.then(Ok, Err);
     },
 
