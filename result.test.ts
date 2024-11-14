@@ -60,7 +60,7 @@ Deno.test("try", () => {
     });
     assertStrictEquals(e.isErr(), true);
     assertInstanceOf(e.value, Error);
-    assertStrictEquals(e.value.message, "frob");
+    assertStrictEquals((e.value as Error).message, "frob");
 });
 
 Deno.test("runtime type check", () => {
