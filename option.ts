@@ -5,12 +5,12 @@ import type { Result } from "./result.ts";
 /**
  * An {@link Option} containing a value.
  */
-export type Some<A> = { result: true; value: A };
+export type Some<A> = { readonly result: true; readonly value: A };
 
 /**
  * An empty {@link Option}, containing no value.
  */
-export type None = { result: false; value: never };
+export type None = { readonly result: false; readonly value: never };
 
 /**
  * `Option<A>` provides a nullable value of type `A`. It's essentially the same
@@ -252,7 +252,7 @@ export function Some<A>(value: A): Option<A> {
  */
 // deno-lint-ignore no-explicit-any
 export const None: Option<any> = Object.create(OptionClass.prototype);
-None.result = false;
+(None as { result: boolean }).result = false;
 
 /**
  * Extract the value type from an {@link Option} type.

@@ -4,11 +4,11 @@ import { ResultClass } from "./result-impl.ts";
 /**
  * A {@link Result} containing a success value.
  */
-export type Ok<A> = { result: true; value: A };
+export type Ok<A> = { readonly result: true; readonly value: A };
 /**
  * A {@link Result} containing an error value.
  */
-export type Err<E> = { result: false; value: E };
+export type Err<E> = { readonly result: false; readonly value: E };
 
 /**
  * A value which can be of either type `A` or type `E`.
